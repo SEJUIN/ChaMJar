@@ -9,7 +9,6 @@ public class Player : MonoBehaviour
     float hAxis;
     float vAxis;
     bool fDown;
-    Rigidbody body;
 
     Vector3 moveVec;
     float curChaAngle;
@@ -19,15 +18,23 @@ public class Player : MonoBehaviour
     void Awake()
     {
         anim = GetComponentInChildren<Animator>();
-        body = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
+        GetInput();
+        Move();
+    }
+
+    void GetInput()
+    {
         hAxis = Input.GetAxisRaw("Horizontal");
         vAxis = Input.GetAxisRaw("Vertical");
         fDown = Input.GetButton("SpeedDoping");
+    }
 
+    void Move()
+    {
         moveVec = new Vector3(hAxis, 0, vAxis);
 
         if (moveVec != Vector3.zero)
@@ -41,24 +48,17 @@ public class Player : MonoBehaviour
             }
         }
 
-        transform.Translate(moveVec * speed * (fDown ? 1f : 0.5f) * Time.deltaTime);
+        if (vAxis < 0 && fDown == true)
+        {
+            transform.Translate(moveVec * speed * 0.5f * (vAxis < 0 ? 0.5f : 1f) * Time.deltaTime);
+            anim.SetBool("isSpeedDoping", false);
+        }
+        else
+        {
+            transform.Translate(moveVec * speed * (fDown ? 1f : 0.5f) * (vAxis < 0 ? 0.5f : 1f) * Time.deltaTime);
 
-        //moveVec = transform.forward * moveVec.z + transform.right * moveVec.x;
-
-        //body.velocity = moveVec * speed * Time.fixedDeltaTime;
-
-        //transform.position += moveVec * speed *(fDown ? 1f : 0.5f )* Time.deltaTime;
-
-        anim.SetBool("isWalk", moveVec != Vector3.zero);
-        anim.SetBool("isSpeedDoping",fDown);
-
-        //if(vAxis >= 0)
-        //    transform.LookAt(transform.position + moveVec);
-
-        //if(hAxis == 0 || vAxis == 0)
-        //{
-        //    curChaAngle = transform.rotation.y;
-        //    //transform.localRotation *= Quaternion.Euler(0, curChaAngle, 0);
-        //}
+            anim.SetBool("isWalk", moveVec != Vector3.zero);
+            anim.SetBool("isSpeedDoping", fDown);
+        }
     }
 }
