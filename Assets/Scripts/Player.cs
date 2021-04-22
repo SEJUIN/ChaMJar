@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
     void Move()
     {
         moveVec = new Vector3(hAxis, 0, vAxis);
+        Debug.Log(moveVec);
 
         if (moveVec != Vector3.zero)
         {
@@ -56,7 +57,7 @@ public class Player : MonoBehaviour
         else
         {
             transform.Translate(moveVec * speed * (fDown ? 1f : 0.5f) * (vAxis < 0 ? 0.5f : 1f) * Time.deltaTime);
-
+            Debug.Log(transform.position);
             anim.SetBool("isWalk", moveVec != Vector3.zero);
             anim.SetBool("isSpeedDoping", fDown);
         }
